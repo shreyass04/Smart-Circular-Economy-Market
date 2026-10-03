@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Waste - SCEM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="add_waste.html" class="active">Add Waste</a>
+        <a href="view_waste.html">View Waste</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="suggestion.html">Suggestions</a>
+        <a href="about.html">About</a>
+        
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <!-- ── Form Section ── -->
+    <main class="form-main">
+
+      <div class="form-card">
+
+        <!-- Header -->
+        <div style="text-align:center; margin-bottom:32px;">
+          <div style="font-size:48px; margin-bottom:12px;">♻️</div>
+          <h1>Add Waste Item</h1>
+          <p class="intro">
+            Tell us about your waste and we'll help find the best recycling solution 🌱
+          </p>
+        </div>
+
+        <!-- Form -->
+        <form class="waste-form" id="wasteForm">
+
+          <div class="form-group">
+            <label>🏷️ Item Name</label>
+            <input
+              type="text"
+              id="itemName"
+              placeholder="e.g. Plastic Bottles, Old Monitor..."
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>🗂️ Material Type</label>
+            <select id="itemType" required>
+              <option value="">Select Material Type</option>
+              <option value="Plastic">🧴 Plastic</option>
+              <option value="Glass">🪞 Glass</option>
+              <option value="Metal">🔩 Metal</option>
+              <option value="Organic">🌱 Organic</option>
+              <option value="E-waste">📱 E-waste</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>⚖️ Quantity (kg)</label>
+            <input
+              type="number"
+              id="itemQty"
+              placeholder="e.g. 2.5"
+              min="0.1"
+              step="0.1"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>📍 Location</label>
+            <input
+              type="text"
+              id="itemLocation"
+              placeholder="e.g. Pune, Mumbai, Nagpur..."
+              required
+            >
+          </div>
+
+          <!-- Live Preview -->
+          <div id="preview-box" style="
+            display:none;
+            background:var(--green-pale);
+            border:2px solid var(--green-light);
+            border-radius:var(--radius-md);
+            padding:16px 20px;
+            margin-bottom:20px;
+            font-size:14px;
+            color:var(--text-secondary);
+          ">
+            <strong style="color:var(--green-dark);">📋 Preview:</strong>
+            <span id="preview-text"></span>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">
+            ♻️ Submit Waste Item
+          </button>
+
+        </form>
+
+      </div>
+
+      <!-- ── Tips Box ── -->
+      <div style="
+        margin-top:24px;
+        background:var(--white);
+        border-radius:var(--radius-lg);
+        padding:24px;
+        box-shadow:var(--shadow-sm);
+        border:1px solid rgba(82,171,152,0.1);
+      ">
+        <h3 style="color:var(--green-dark); margin-bottom:14px; font-size:16px;">
+          💡 Quick Tips
+        </h3>
+        <ul style="
+          padding-left:18px;
+          color:var(--text-secondary);
+          font-size:14px;
+          line-height:2;
+        ">
+          <li>Be specific with item names for better AI suggestions</li>
+          <li>Estimate quantity as accurately as possible</li>
+          <li>Add your nearest city or area for location</li>
+          <li>E-waste items need special handling — add them separately</li>
+        </ul>
+      </div>
+
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About - SCEM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="add_waste.html">Add Waste</a>
+        <a href="view_waste.html">View Waste</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="suggestion.html">Suggestions</a>
+        <a href="about.html" class="active">About</a>
+       
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <main class="about-main">
+
+      <div class="about-hero">
+        <h1>🌿 About SCEM</h1>
+        <p>Smart Circular Economy Market — bridging the gap between waste producers and recyclers for a greener tomorrow.</p>
+      </div>
+
+      <div class="about-grid">
+
+        <div class="about-card">
+          <span class="card-icon">👩‍💻</span>
+          <h3>Developer</h3>
+          <p><strong>Name:</strong> Shreya Sawant</p>
+          <p><strong>Role:</strong> Full Stack Developer</p>
+          <p><strong>Passion:</strong> Building tech for a greener world 🌍</p>
+        </div>
+
+        <div class="about-card">
+          <span class="card-icon">🎯</span>
+          <h3>Vision</h3>
+          <p>Many people throw away useful waste without realizing its reuse potential. SCEM connects them with recyclers and provides AI-powered suggestions for smarter waste management.</p>
+        </div>
+
+        <div class="about-card">
+          <span class="card-icon">📘</span>
+          <h3>Tech Stack</h3>
+          <ul>
+            <li>HTML, CSS, JavaScript</li>
+            <li>Java Spring Boot</li>
+            <li>MySQL Database</li>
+            <li>REST API</li>
+            <li>AI Rule-Based Logic</li>
+          </ul>
+        </div>
+
+        <div class="about-card">
+          <span class="card-icon">🚀</span>
+          <h3>Features</h3>
+          <ul>
+            <li>Add and view waste items</li>
+            <li>AI-powered reuse suggestions</li>
+            <li>Real-time database storage</li>
+            <li>Dark mode support</li>
+            <li>Search and filter waste</li>
+          </ul>
+        </div>
+
+        <div class="about-card">
+          <span class="card-icon">🔮</span>
+          <h3>Coming Soon</h3>
+          <ul>
+            <li>User login system</li>
+            <li>Chat with recyclers</li>
+            <li>Mobile app version</li>
+            <li>Cloud deployment</li>
+            <li>Real AI integration</li>
+          </ul>
+        </div>
+
+        <div class="about-card" style="
+          background:linear-gradient(135deg,var(--green-dark),var(--green-mid));
+          color:white;
+        ">
+          <span class="card-icon">💬</span>
+          <h3 style="color:white;">Message</h3>
+          <p style="color:rgba(255,255,255,0.9); font-size:18px; font-style:italic; line-height:1.6;">
+            "Start small. Think big. Grow green." 🌱
+          </p>
+          <p style="color:rgba(255,255,255,0.7); margin-top:12px; font-size:13px;">
+            — Shreya Sawant, SCEM 2026
+          </p>
+        </div>
+
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

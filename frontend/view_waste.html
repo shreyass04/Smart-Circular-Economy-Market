@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Waste - SCEM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="add_waste.html">Add Waste</a>
+        <a href="view_waste.html" class="active">View Waste</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="suggestion.html">Suggestions</a>
+        <a href="about.html">About</a>
+        
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <main class="view-main">
+
+      <div class="page-header">
+        <h1>📦 Submitted Waste Items</h1>
+        <p>All waste items listed by our community 🌍</p>
+      </div>
+
+      <div class="view-controls">
+        <div class="search-bar">
+          <span>🔍</span>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by name or location..."
+            oninput="filterCards()"
+          >
+        </div>
+        <div class="waste-count">
+          Total: <span id="count-display">0</span> items
+        </div>
+        <select id="filterType" onchange="filterCards()" style="
+          padding:10px 16px;
+          border:2px solid rgba(82,171,152,0.15);
+          border-radius:var(--radius-md);
+          font-family:'Outfit',sans-serif;
+          font-size:14px;
+          color:var(--text-primary);
+          background:var(--white);
+          cursor:pointer;
+          outline:none;
+        ">
+          <option value="">All Types</option>
+          <option value="Plastic">🧴 Plastic</option>
+          <option value="Glass">🪞 Glass</option>
+          <option value="Metal">🔩 Metal</option>
+          <option value="Organic">🌱 Organic</option>
+          <option value="E-waste">📱 E-waste</option>
+        </select>
+      </div>
+
+      <div class="card-container" id="card-container">
+        <div class="loading">
+          <div class="spinner"></div>
+          Loading waste items...
+        </div>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suggestions - SCEM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="add_waste.html">Add Waste</a>
+        <a href="view_waste.html">View Waste</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="suggestion.html" class="active">Suggestions</a>
+        <a href="about.html">About</a>
+      
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <main class="suggestions-main">
+
+      <div class="page-header">
+        <h1>🤖 AI Smart Suggestions</h1>
+        <p>Personalized waste reuse tips powered by AI 💡</p>
+      </div>
+
+     <!-- ── Gemini AI Box ── -->
+<div style="
+  background:var(--white);
+  border-radius:var(--radius-xl);
+  padding:32px;
+  margin-bottom:32px;z
+  box-shadow:var(--shadow-md);
+  border:1px solid rgba(82,171,152,0.1);
+">
+  <h3 style="color:var(--green-dark); margin-bottom:8px;">
+    🤖 Ask Gemini AI
+  </h3>
+  <p style="color:var(--text-muted); font-size:14px; margin-bottom:20px;">
+    Type any waste item and get real AI suggestions!
+  </p>
+
+  <div style="display:flex; gap:12px; flex-wrap:wrap;">
+    <input
+      type="text"
+      id="geminiInput"
+      placeholder="e.g. old broken laptop, torn clothes..."
+      style="
+        flex:1;
+        padding:14px 18px;
+        border:2px solid rgba(82,171,152,0.2);
+        border-radius:var(--radius-md);
+        font-family:'Outfit',sans-serif;
+        font-size:15px;
+        outline:none;
+        color:var(--text-primary);
+        background:var(--off-white);
+        min-width:200px;
+      "
+    >
+    <button onclick="askGemini()" id="geminiBtn" class="btn">
+      ✨ Ask AI
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div id="gemini-loading" style="display:none; margin-top:20px;">
+    <div class="spinner"></div>
+    <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">
+      Gemini AI is thinking... 🤔
+    </p>
+  </div>
+
+  <!-- Result -->
+  <div id="gemini-result" style="
+    display:none;
+    margin-top:20px;
+    background:var(--green-pale);
+    border-radius:var(--radius-md);
+    padding:20px;
+    border-left:4px solid var(--green-light);
+  ">
+    <p style="
+      color:var(--text-primary);
+      font-size:15px;
+      line-height:1.8;
+      white-space:pre-wrap;
+    " id="gemini-text"></p>
+  </div>
+</div>
+
+    </main>
+
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+</body>
+</html>

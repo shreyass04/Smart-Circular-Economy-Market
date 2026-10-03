@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impact Dashboard - SCEM</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 28px;
+    }
+
+    .chart-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid rgba(82,171,152,0.1);
+      transition: var(--transition);
+    }
+
+    .chart-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chart-card h3 {
+      color: var(--green-dark);
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .chart-card p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .chart-card.wide {
+      grid-column: span 2;
+    }
+
+    .big-stat {
+      text-align: center;
+      padding: 32px 20px;
+    }
+
+    .big-stat .big-number {
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--green-mid);
+      line-height: 1;
+      display: block;
+    }
+
+    .big-stat .big-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-weight: 500;
+    }
+
+    .big-stat .big-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .progress-bar-wrap {
+      margin-bottom: 16px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: var(--gray-light);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(90deg, var(--green-light), var(--green-mid));
+      transition: width 1s ease;
+      width: 0%;
+    }
+
+    @media (max-width: 768px) {
+      .chart-card.wide { grid-column: span 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="add_waste.html">Add Waste</a>
+        <a href="view_waste.html">View Waste</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="suggestion.html">Suggestions</a>
+        <a href="about.html">About</a>
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <!-- ── Main ── -->
+    <main>
+      <div class="page-header">
+        <h1>📊 Impact Dashboard</h1>
+        <p>See the real-world environmental impact of our community 🌍</p>
+      </div>
+
+      <!-- ── Top Stats ── -->
+      <div class="stats-row" style="margin-bottom:8px;">
+        <div class="stat-card">
+          <span class="stat-number" id="d-total-items">0</span>
+          <div class="stat-label">Total Items</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="d-total-kg">0</span>
+          <div class="stat-label">Total KG</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="d-co2">0</span>
+          <div class="stat-label">KG CO₂ Saved</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="d-trees">0</span>
+          <div class="stat-label">Trees Equivalent</div>
+        </div>
+      </div>
+
+      <!-- ── Dashboard Grid ── -->
+      <div class="dashboard-grid">
+
+        <!-- Donut: Waste by Type -->
+        <div class="chart-card">
+          <h3>🗂️ Waste by Type</h3>
+          <p>Distribution of waste categories</p>
+          <canvas id="typeChart" height="220"></canvas>
+        </div>
+
+        <!-- Bar: CO2 by Type -->
+        <div class="chart-card">
+          <h3>🌿 CO₂ Saved by Type</h3>
+          <p>Estimated CO₂ reduction per category (kg)</p>
+          <canvas id="co2Chart" height="220"></canvas>
+        </div>
+
+        <!-- Bar: Quantity Wide -->
+        <div class="chart-card wide">
+          <h3>⚖️ Quantity Added Per Item</h3>
+          <p>Total KG of waste submitted per item</p>
+          <canvas id="qtyChart" height="160"></canvas>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="chart-card">
+          <h3>📊 Type Breakdown</h3>
+          <p>Percentage share of each waste type</p>
+          <div id="progress-bars"></div>
+        </div>
+
+        <!-- Big Trees Stat -->
+        <div class="chart-card big-stat">
+          <span class="big-icon">🌳</span>
+          <span class="big-number" id="trees-big">0</span>
+          <div class="big-label">Trees worth of CO₂ absorbed</div>
+          <div style="margin-top:16px; font-size:13px;
+                      color:var(--text-muted); line-height:1.6;">
+            Each tree absorbs ~21 kg CO₂/year.<br>
+            Your community has offset the equivalent!
+          </div>
+        </div>
+
+        <!-- Bar: Location Wide -->
+        <div class="chart-card wide">
+          <h3>📍 Waste by Location</h3>
+          <p>Top cities contributing to recycling</p>
+          <canvas id="locationChart" height="160"></canvas>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="script.js"></script>
+  <script>
+
+  // ── CO2 factors ──
+  const co2Factor = {
+    Plastic:   2.5,
+    Glass:     0.3,
+    Metal:     1.8,
+    Organic:   0.6,
+    'E-waste': 3.0
+  };
+
+  const typeColors = {
+    Plastic:   '#4fc3f7',
+    Glass:     '#81c784',
+    Metal:     '#ff8a65',
+    Organic:   '#aed581',
+    'E-waste': '#ce93d8'
+  };
+
+  // ── Animate Counter ──
+  function animateDash(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let cur = 0;
+    const step = Math.ceil(target / 50) || 1;
+    const t = setInterval(() => {
+      cur += step;
+      if (cur >= target) { el.textContent = target; clearInterval(t); }
+      else el.textContent = cur;
+    }, 30);
+  }
+
+  // ── Chart defaults ──
+  Chart.defaults.font.family = "'Outfit', sans-serif";
+  Chart.defaults.color = '#4a6360';
+
+  // ── Fetch and Render ──
+  fetch('http://localhost:8082/api/waste')
+    .then(r => r.json())
+    .then(items => {
+
+      const typeTotals     = {};
+      const locationTotals = {};
+      let totalKg = 0;
+
+      items.forEach(item => {
+        const qty = item.quantity || 0;
+        totalKg  += qty;
+        typeTotals[item.type] =
+          (typeTotals[item.type] || 0) + qty;
+        const loc = (item.location || 'Unknown').trim();
+        locationTotals[loc] = (locationTotals[loc] || 0) + qty;
+      });
+
+      const totalCO2   = Object.entries(typeTotals)
+        .reduce((s,[t,q]) => s + q * (co2Factor[t] || 1), 0);
+      const totalTrees = Math.round(totalCO2 / 21);
+
+      // Top stats
+      animateDash('d-total-items', items.length);
+      animateDash('d-total-kg',    Math.round(totalKg));
+      animateDash('d-co2',         Math.round(totalCO2));
+      animateDash('d-trees',       totalTrees);
+      animateDash('trees-big',     totalTrees);
+
+      const typeLabels = Object.keys(typeTotals);
+      const typeData   = Object.values(typeTotals);
+
+      // ── Donut Chart ──
+      new Chart(document.getElementById('typeChart'), {
+        type: 'doughnut',
+        data: {
+          labels: typeLabels,
+          datasets: [{
+            data: typeData,
+            backgroundColor: typeLabels.map(t => typeColors[t] || '#ccc'),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 16, font: { size: 13 } }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+
+      // ── CO2 Bar Chart ──
+      const co2ByType = typeLabels.map(t =>
+        Math.round((typeTotals[t] || 0) * (co2Factor[t] || 1))
+      );
+      new Chart(document.getElementById('co2Chart'), {
+        type: 'bar',
+        data: {
+          labels: typeLabels,
+          datasets: [{
+            label: 'CO₂ Saved (kg)',
+            data: co2ByType,
+            backgroundColor: typeLabels.map(t => typeColors[t] || '#ccc'),
+            borderRadius: 8,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true,
+                 grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+      // ── Quantity Bar Chart ──
+      new Chart(document.getElementById('qtyChart'), {
+        type: 'bar',
+        data: {
+          labels: items.map(i => i.name || 'Item'),
+          datasets: [{
+            label: 'Quantity (kg)',
+            data:  items.map(i => i.quantity || 0),
+            backgroundColor: 'rgba(82,171,152,0.7)',
+            borderColor: '#2d7a5f',
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true,
+                 grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false },
+                 ticks: { maxRotation: 45, font: { size: 11 } } }
+          }
+        }
+      });
+
+      // ── Progress Bars ──
+      const pb = document.getElementById('progress-bars');
+      typeLabels.forEach(type => {
+        const pct = Math.round((typeTotals[type] / totalKg) * 100) || 0;
+        pb.innerHTML += `
+          <div class="progress-bar-wrap">
+            <div class="progress-label">
+              <span>${type}</span>
+              <span>${pct}% (${Math.round(typeTotals[type])} kg)</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${pct}%;
+                background:${typeColors[type]};">
+              </div>
+            </div>
+          </div>`;
+      });
+
+      // ── Location Chart ──
+      const locLabels = Object.keys(locationTotals)
+        .sort((a,b) => locationTotals[b] - locationTotals[a])
+        .slice(0, 8);
+      new Chart(document.getElementById('locationChart'), {
+        type: 'bar',
+        data: {
+          labels: locLabels,
+          datasets: [{
+            label: 'Waste (kg)',
+            data:  locLabels.map(l => Math.round(locationTotals[l])),
+            backgroundColor: 'rgba(126,207,192,0.75)',
+            borderColor: '#3d9b8a',
+            borderWidth: 2,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true,
+                 grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+    })
+    .catch(() => {
+      document.querySelector('.dashboard-grid').innerHTML = `
+        <div class="empty-state">
+          <span class="empty-icon">❌</span>
+          <h3>Cannot connect to server!</h3>
+          <p>Make sure Spring Boot is running on port 8082.</p>
+        </div>`;
+    });
+  </script>
+</body>
+</html>

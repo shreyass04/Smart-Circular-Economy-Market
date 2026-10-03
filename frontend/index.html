@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCEM - Smart Circular Economy Market</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar">
+      <h2 class="logo">
+        <span class="logo-icon">♻️</span>
+        SCEM
+      </h2>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="add_waste.html">Add Waste</a>
+        <a href="view_waste.html">View Waste</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="suggestion.html">Suggestions</a>
+        <a href="about.html">About</a>
+        
+      </div>
+      <button class="dark-toggle" onclick="toggleDark()" title="Toggle Dark Mode">🌙</button>
+    </nav>
+
+    <!-- ── Hero Section ── -->
+    <main class="home-main">
+
+      <div class="hero-badge">🌍 Building a Greener Planet Together</div>
+
+      <h1>Turn Waste Into<br><span>Someone's Resource</span></h1>
+
+      <p class="intro">
+        Smart Circular Economy Market connects waste producers
+        with recyclers. AI-powered suggestions help you make
+        the best use of every waste item. 🌱
+      </p>
+
+      <!-- ── Stats Row ── -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-number" id="total-items">0</span>
+          <div class="stat-label">Items Listed</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="total-kg">0</span>
+          <div class="stat-label">KG Waste Saved</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="total-types">0</span>
+          <div class="stat-label">Waste Types</div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-number" id="co2-saved">0</span>
+          <div class="stat-label">KG CO₂ Saved</div>
+        </div>
+      </div>
+
+      <!-- ── Hero Icon ── -->
+      <div class="hero-icon-wrap">
+        <img src="https://cdn-icons-png.flaticon.com/512/2622/2622832.png" alt="Recycle Icon">
+      </div>
+
+      <!-- ── CTA Buttons ── -->
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+        <a href="add_waste.html" class="btn">♻️ Add Your Waste Now</a>
+        <a href="view_waste.html" class="btn btn-outline">📦 View All Waste</a>
+      </div>
+
+      <!-- ── Impact Section ── -->
+      <div class="impact-section" style="margin-top:60px;">
+        <h2>🌿 Our Collective Impact</h2>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <span class="impact-number" id="impact-items">0</span>
+            <div class="impact-label">Items Recycled</div>
+          </div>
+          <div class="impact-card">
+            <span class="impact-number" id="impact-kg">0</span>
+            <div class="impact-label">KG Diverted</div>
+          </div>
+          <div class="impact-card">
+            <span class="impact-number" id="impact-co2">0</span>
+            <div class="impact-label">KG CO₂ Avoided</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── How It Works ── -->
+      <div style="margin-top:60px; text-align:left;">
+        <h2 style="font-family:'Playfair Display',serif; text-align:center;
+                   color:var(--green-dark); font-size:28px; margin-bottom:28px;">
+          How It Works
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px;">
+
+          <div class="about-card" style="text-align:center;">
+            <span class="card-icon">📝</span>
+            <h3>1. Add Waste</h3>
+            <p>Fill in your waste item details — name, type, quantity and location.</p>
+          </div>
+
+          <div class="about-card" style="text-align:center;">
+            <span class="card-icon">🤖</span>
+            <h3>2. Get AI Tips</h3>
+            <p>Our AI suggests the best reuse or recycling options for your waste.</p>
+          </div>
+
+          <div class="about-card" style="text-align:center;">
+            <span class="card-icon">🔄</span>
+            <h3>3. Connect</h3>
+            <p>Recyclers find your waste and collect it — closing the loop!</p>
+          </div>
+
+          <div class="about-card" style="text-align:center;">
+            <span class="card-icon">🌍</span>
+            <h3>4. Impact</h3>
+            <p>Together we reduce landfill waste and save CO₂ emissions.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer class="footer">
+      Made with <span>💚</span> by Shreya Sawant &nbsp;|&nbsp; SCEM © 2026
+    </footer>
+
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
