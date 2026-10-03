@@ -1,2 +1,4 @@
 backend/scem-backend/src/main/resources/application.properties
 *.class
+frontend/config.js
+config.js
