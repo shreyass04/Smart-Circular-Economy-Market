@@ -356,12 +356,108 @@ if (aiBox) {
     })
     .catch(err => console.error('Suggestions error:', err));
 }
+
 // ============================================
-// GEMINI AI INTEGRATION
+// GEMINI AI INTEGRATION (with rule-based fallback)
 // ============================================
 
+// GEMINI_API_KEY comes from config.js (kept out of GitHub).
+// suggestion.html must load config.js BEFORE script.js.
+const GEMINI_URL =
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent";
 
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+// ── Rule-based backup (used when Gemini fails) ──
+function ruleBasedAnswer(textIn) {
+  const t = textIn.toLowerCase();
+  let tips;
+
+  if (/plastic|bottle|polythene|bag/.test(t)) {
+    tips = [
+      "Rinse and sort by plastic type before giving it to a recycler.",
+      "Reuse bottles as planters, storage containers or bird feeders.",
+      "Sell clean plastic to a local scrap dealer (kabadiwala).",
+      "Never burn plastic, it releases toxic fumes.",
+      "Switch to cloth bags and steel bottles to cut plastic use."
+    ];
+  } else if (/paper|cardboard|newspaper|book/.test(t)) {
+    tips = [
+      "Keep paper dry and clean, then sell it to a scrap dealer.",
+      "Reuse cardboard for packing or school craft projects.",
+      "Use old newspaper for wrapping or cleaning glass.",
+      "Shred paper for compost or pet bedding.",
+      "Print on both sides to reduce paper waste."
+    ];
+  } else if (/metal|iron|steel|aluminium|aluminum|can|tin|copper/.test(t)) {
+    tips = [
+      "Keep different metals separate for a better scrap price.",
+      "Sell to a scrap dealer or metal recycler.",
+      "Reuse tin cans as pen holders or planters.",
+      "Donate usable utensils and tools.",
+      "Metal can be recycled again and again without losing quality."
+    ];
+  } else if (/glass|jar/.test(t)) {
+    tips = [
+      "Wash and reuse jars for storage.",
+      "Hand over bottles to a glass recycler or scrap dealer.",
+      "Wrap broken glass in paper and label it for safe disposal.",
+      "Turn bottles into lamps or vases.",
+      "Never mix glass with general waste."
+    ];
+  } else if (/electronic|e-waste|ewaste|battery|phone|laptop|charger|cable|tv/.test(t)) {
+    tips = [
+      "Do not throw e-waste in the dustbin.",
+      "Give it to an authorised e-waste collection centre.",
+      "Donate or sell devices that still work.",
+      "Ask the manufacturer about take-back programs.",
+      "Remove personal data before disposing of any device."
+    ];
+  } else if (/food|vegetable|fruit|organic|kitchen|peel|leaves|garden/.test(t)) {
+    tips = [
+      "Make compost at home from kitchen waste.",
+      "Give leftover food to farmers or animal feed collectors.",
+      "Use vegetable peels for natural cleaners or garden fertiliser.",
+      "Send large amounts to a biogas plant.",
+      "Plan meals to reduce food waste."
+    ];
+  } else if (/cloth|textile|fabric|shirt|jeans|saree/.test(t)) {
+    tips = [
+      "Donate wearable clothes to charities.",
+      "Turn old cloth into cleaning rags or bags.",
+      "Give worn-out fabric to textile recyclers.",
+      "Swap clothes with friends or family.",
+      "Repair and restyle before throwing away."
+    ];
+  } else {
+    tips = [
+      "Check what material the item is made of.",
+      "Sort it as plastic, paper, metal, glass, organic or e-waste.",
+      "Look for a local recycler or scrap dealer.",
+      "Think of a creative way to reuse it at home.",
+      "Dispose of anything unusable responsibly."
+    ];
+  }
+
+  return tips.map((tip, i) => `${i + 1}. ${tip}`).join('\n') +
+         '\n\n♻️ Small steps in recycling make a big difference!';
+}
+
+// ── Button cooldown ──
+function startCooldown(btn, seconds) {
+  let countdown = seconds;
+  btn.disabled = true;
+  btn.textContent = `⏳ Wait ${countdown}s`;
+  const timer = setInterval(() => {
+    countdown--;
+    btn.textContent = `⏳ Wait ${countdown}s`;
+    if (countdown <= 0) {
+      clearInterval(timer);
+      btn.disabled = false;
+      btn.textContent = '✨ Ask AI';
+    }
+  }, 1000);
+}
+
+let geminiBusy = false;
 
 async function askGemini() {
   const input   = document.getElementById('geminiInput');
@@ -377,80 +473,84 @@ async function askGemini() {
     showToast('⚠️ Please type a waste item first!');
     return;
   }
+  if (geminiBusy) return;
+  geminiBusy = true;
 
   // Show loading
-  btn.disabled      = true;
-  btn.textContent   = '⏳ Thinking...';
+  btn.disabled          = true;
+  btn.textContent       = '⏳ Thinking...';
   loading.style.display = 'block';
   result.style.display  = 'none';
 
   // Prompt for Gemini
   const prompt = `
     You are an expert in waste management and circular economy.
-    
+
     A user has this waste item: "${userInput}"
-    
-    Give 5 smart, practical and creative suggestions on how to 
+
+    Give 5 smart, practical and creative suggestions on how to
     reuse, recycle or dispose this waste item responsibly.
-    
+
     Format your response as a numbered list.
     Keep each suggestion short and clear.
     Focus on Indian context where possible.
     End with one motivational line about recycling.
   `;
 
+  let answer;
+  let usedFallback = false;
+
   try {
+    if (typeof GEMINI_API_KEY === 'undefined') {
+      throw new Error('GEMINI_API_KEY missing. Is config.js loaded before script.js?');
+    }
+
     const response = await fetch(GEMINI_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': GEMINI_API_KEY
+      },
       body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }]
+        contents: [{ parts: [{ text: prompt }] }]
       })
     });
 
     const data = await response.json();
 
-    // Extract response text
-    if (!data.candidates || data.candidates.length === 0) {
-  if (data.error?.code === 429) {
-    throw new Error('Too many requests! Wait 1 minute and try again.');
+    if (!response.ok) {
+      console.error('Gemini API error:', response.status, data);
+      throw new Error('Gemini error ' + response.status);
     }
-    throw new Error('No response from Gemini!');
-   }
-const aiText = data.candidates[0].content.parts[0].text;
+    if (!data.candidates || data.candidates.length === 0) {
+      throw new Error('No response from Gemini');
+    }
 
-    // Show result
-    text.textContent      = aiText;
-    result.style.display  = 'block';
-    loading.style.display = 'none';
-    // 10 second cooldown between requests
-let countdown = 10;
-btn.textContent = `⏳ Wait ${countdown}s`;
-const timer = setInterval(() => {
-  countdown--;
-  btn.textContent = `⏳ Wait ${countdown}s`;
-  if (countdown <= 0) {
-    clearInterval(timer);
-    btn.disabled    = false;
-    btn.textContent = '✨ Ask AI';
-  }
-}, 1000);
-
-    showToast('✅ Gemini AI responded!');
+    answer = data.candidates[0].content.parts[0].text;
 
   } catch (error) {
-    loading.style.display = 'none';
-    btn.disabled          = false;
-    btn.textContent       = '✨ Ask AI';
-    showToast('⏱️ Too many requests! Wait 1 minute and try again.');
-    console.error('Gemini error:', error);
+    // Gemini failed (429, wrong key, no internet...) -> use rule-based answer
+    console.error('Gemini failed, using rule-based fallback:', error);
+    answer = ruleBasedAnswer(userInput);
+    usedFallback = true;
   }
+
+  // Show result
+  text.textContent      = answer;
+  result.style.display  = 'block';
+  loading.style.display = 'none';
+
+  showToast(usedFallback
+    ? '💡 AI is busy, showing quick suggestions'
+    : '✅ Gemini AI responded!');
+
+  // 10 second cooldown between requests
+  startCooldown(btn, 10);
+  setTimeout(() => { geminiBusy = false; }, 10000);
 }
 
 // Allow Enter key to trigger Gemini
 document.getElementById('geminiInput')?.
-  addEventListener('keypress', function(e) {
+  addEventListener('keypress', function (e) {
     if (e.key === 'Enter') askGemini();
   });
